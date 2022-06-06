@@ -50,6 +50,7 @@ apt update
 apt install -y nodejs=18.3.0-deb-1nodesource1
 
 cd /opt
+rm -rf ct-aws-test
 git clone https://github.com/whboyd/ct-aws-test.git
 
 cd /opt/ct-aws-test/api
@@ -77,27 +78,32 @@ chown -R ct-aws:ct-aws /opt/ct-aws-test
 
 systemctl daemon-reload
 systemctl enable ct-aws-api
-systemctl start ct-aws-api
+systemctl restart ct-aws-api
 
 # Frontend
+npm install -g serve
+
 cat << EOF > /etc/systemd/system/ct-aws-frontend.service
 [Service]
 WorkingDirectory=/opt/ct-aws-test/frontend
-ExecStart=npm start --port 8081
+ExecStart=npm start
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=ct-aws-frontend
 User=ct-aws
 Group=ct-aws
+Environment=PORT=8081
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 cd /opt/ct-aws-test/frontend
+rm package-lock.json
 npm install
+npm run build
 chown -R ct-aws:ct-aws /opt/ct-aws-test
 systemctl daemon-reload
 systemctl enable ct-aws-frontend
-systemctl start ct-aws-frontend
+systemctl restart ct-aws-frontend
