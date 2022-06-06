@@ -25,6 +25,7 @@ cat << EOF | mysql
 create database plantshop;
 use plantshop;
 
+drop table items;
 create table items (
   id int not null auto_increment,
   name varchar(255) not null,
@@ -86,7 +87,7 @@ npm install -g serve
 cat << EOF > /etc/systemd/system/ctaws-plant-shop-frontend.service
 [Service]
 WorkingDirectory=/opt/ctaws-plant-shop/frontend
-ExecStart=npm start
+ExecStart=serve -s build
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
