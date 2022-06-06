@@ -1,3 +1,6 @@
+#! /bin/bash
+
+# Database
 export DEBIAN_FRONTEND=noninteractive
 
 echo "mysql-apt-config mysql-apt-config/repo-codename select bionic" | debconf-set-selections
@@ -40,6 +43,47 @@ create user 'woo' identified with mysql_native_password by 'woo';
 grant select on store.items to woo;
 EOF
 
+# API
 apt install nodejs
-mkdir -p /var/www/ct-aws-api
-wget
+
+cd /opt
+git checkout https://github.com/whboyd/ct-aws-test.git
+cat < EOF > /etc/systemd/system/ct-aws-api.service
+[Service]
+ExecStart=node /opt/ct-aws-test/api/server.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ct-aws-api
+User=ct-aws-api
+Group=ct-aws-api
+Environment=DB_HOST=127.0.0.1
+Environment=DB_USER=woo
+Environment=DB_PASS=woo
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable ct-aws-api
+systemctl start ct-aws-api
+
+# Frontend
+npm install -g serve
+
+cat < EOF > /etc/systemd/system/ct-aws-frontend.service
+[Service]
+ExecStart=serve -s /opt/ct-aws-test/frontend -l 8080
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ct-aws-frontend
+User=ct-aws-frontend
+Group=ct-aws-frontend
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable ct-aws-frontend
+systemctl start ct-aws-frontend
