@@ -1,6 +1,8 @@
 #! /bin/bash
 
 # Database
+until apt-get remove -y unattended-upgrades; do sleep 5; done
+
 export DEBIAN_FRONTEND=noninteractive
 
 echo "mysql-apt-config mysql-apt-config/repo-codename select bionic" | debconf-set-selections
@@ -16,7 +18,6 @@ echo "mysql-apt-config/enable-repo select mysql-5.7-dmr" | debconf-set-selection
 wget https://dev.mysql.com/get/mysql-apt-config_0.8.22-1_all.deb
 dpkg --install mysql-apt-config_0.8.22-1_all.deb
 
-until apt-get remove -y unattended-upgrades; do sleep 5; done
 apt update
 apt install -y -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7*
 until echo "show databases;" | mysql; do sleep 5; done
@@ -44,19 +45,25 @@ grant select on store.items to woo;
 EOF
 
 # API
-apt install nodejs
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+apt update
+apt install -y nodejs=18.3.0-deb-1nodesource1
 
 cd /opt
-git checkout https://github.com/whboyd/ct-aws-test.git
-cat < EOF > /etc/systemd/system/ct-aws-api.service
+git clone https://github.com/whboyd/ct-aws-test.git
+
+cd /opt/ct-aws-test/api
+npm install
+cat << EOF > /etc/systemd/system/ct-aws-api.service
 [Service]
-ExecStart=node /opt/ct-aws-test/api/server.js
+WorkingDirectory=/opt/ct-aws-test/api
+ExecStart=node server.js
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=ct-aws-api
-User=ct-aws-api
-Group=ct-aws-api
+User=ct-aws
+Group=ct-aws
 Environment=DB_HOST=127.0.0.1
 Environment=DB_USER=woo
 Environment=DB_PASS=woo
@@ -65,25 +72,32 @@ Environment=DB_PASS=woo
 WantedBy=multi-user.target
 EOF
 
+useradd ct-aws
+chown -R ct-aws:ct-aws /opt/ct-aws-test
+
+systemctl daemon-reload
 systemctl enable ct-aws-api
 systemctl start ct-aws-api
 
 # Frontend
-npm install -g serve
-
-cat < EOF > /etc/systemd/system/ct-aws-frontend.service
+cat << EOF > /etc/systemd/system/ct-aws-frontend.service
 [Service]
-ExecStart=serve -s /opt/ct-aws-test/frontend -l 8080
+WorkingDirectory=/opt/ct-aws-test/frontend
+ExecStart=npm start --port 8081
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=ct-aws-frontend
-User=ct-aws-frontend
-Group=ct-aws-frontend
+User=ct-aws
+Group=ct-aws
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+cd /opt/ct-aws-test/frontend
+npm install
+chown -R ct-aws:ct-aws /opt/ct-aws-test
+systemctl daemon-reload
 systemctl enable ct-aws-frontend
 systemctl start ct-aws-frontend

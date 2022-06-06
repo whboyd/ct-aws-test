@@ -23,10 +23,10 @@ function App() {
         <h2>The Store</h2>
       </header>
       <div className="items-container">
-        {itemData.items.map(item => (
+        {itemData.items?.map(item => (
           <div className="item-card">
             <h4>{item.name}</h4>
-            <h5>Words words words words words words</h5>
+            <h5>{item.description}</h5>
             <h6>${item.price}</h6>
           </div>
         ))}
