@@ -9,9 +9,11 @@ create table items (
   primary key (id)
 );
 
-insert into items (name, description, price) values ("bees", "A packet of bees.", 3);
-insert into items (name, description, price) values ("trees", "Some trees.", 3);
-insert into items (name, description, price) values ("wheels", "Four wheels.", 3);
-insert into items (name, description, price) values ("flowers", "Not actually flowers, but seeds.", 3);
-insert into items (name, description, price) values ("rocks", "A pile o' stones.", 3);
-insert into items (name, description, price) values ("orange soda", "Several bottles of orange soda.", 3);
+insert into items (name, description, price) values ("Strawberries", "A small strawberry plant.", 5);
+insert into items (name, description, price) values ("Spinach Seeds", "A packet of spinach seeds.", 1);
+insert into items (name, description, price) values ("Watermelon Seeds", "A packet of watermelon seeds.", 1);
+insert into items (name, description, price) values ("Onion Starts", "A package of onion starts used to grow onions.", 5);
+insert into items (name, description, price) values ("String of Pearls", "A small string of pearls plant.", 6);
+insert into items (name, description, price) values ("Aloe Vera", "A succulent that produces a medicinal gel.", 6);
+insert into items (name, description, price) values ("Iresine", "Also known as bloodleaf due to its red leaves.", 14);
+insert into items (name, description, price) values ("Raphidophora", "Also called monstera minima.", 22);
