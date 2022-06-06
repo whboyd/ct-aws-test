@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useState, useEffect } from "react";
 
-const apiUrl = "http://localhost:8080";
+const apiUrl = `http://${window.location.hostname}:8080`;
 
 function App() {
   const [itemData, setItemData] = useState({});

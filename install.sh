@@ -22,7 +22,7 @@ apt update
 apt install -y -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7*
 until echo "show databases;" | mysql; do sleep 5; done
 cat << EOF | mysql
-create database store;
+create database plantshop;
 use plantshop;
 
 create table items (
@@ -33,12 +33,12 @@ create table items (
   primary key (id)
 );
 
-insert into items (name, description, price) values ("bees", "A packet of bees.", 3);
-insert into items (name, description, price) values ("trees", "Some trees.", 3);
-insert into items (name, description, price) values ("wheels", "Four wheels.", 3);
-insert into items (name, description, price) values ("flowers", "Not actually flowers, but seeds.", 3);
-insert into items (name, description, price) values ("rocks", "A pile o' stones.", 3);
-insert into items (name, description, price) values ("orange soda", "Several bottles of orange soda.", 3);
+insert into items (name, description, price) values ("Strawberry", "A strawberry plant.", 5);
+insert into items (name, description, price) values ("Raphidophora", "Also called monstera minima.", 25);
+insert into items (name, description, price) values ("Aloe Vera", "Produces a medicinal gel.", 9);
+insert into items (name, description, price) values ("Watermelon seeds", "A packet of watermelon seeds.", 1);
+insert into items (name, description, price) values ("Iresine", "Also called bloodleaf due to its red leaves.", 9);
+insert into items (name, description, price) values ("String of Pearls", "A small succulent plant.", 5);
 
 create user 'plantshop' identified with mysql_native_password by '6qNaYDdq3pBc34';
 grant select on plantshop.items to plantshop;

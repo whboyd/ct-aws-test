@@ -1,5 +1,5 @@
-create database store;
-use store;
+create database plantshop;
+use plantshop;
 
 create table items (
   id int not null auto_increment,
@@ -9,11 +9,12 @@ create table items (
   primary key (id)
 );
 
-insert into items (name, description, price) values ("Strawberries", "A small strawberry plant.", 5);
-insert into items (name, description, price) values ("Spinach Seeds", "A packet of spinach seeds.", 1);
-insert into items (name, description, price) values ("Watermelon Seeds", "A packet of watermelon seeds.", 1);
-insert into items (name, description, price) values ("Onion Starts", "A package of onion starts used to grow onions.", 5);
-insert into items (name, description, price) values ("String of Pearls", "A small string of pearls plant.", 6);
-insert into items (name, description, price) values ("Aloe Vera", "A succulent that produces a medicinal gel.", 6);
-insert into items (name, description, price) values ("Iresine", "Also known as bloodleaf due to its red leaves.", 14);
-insert into items (name, description, price) values ("Raphidophora", "Also called monstera minima.", 22);
+insert into items (name, description, price) values ("Strawberry", "A strawberry plant.", 5);
+insert into items (name, description, price) values ("Raphidophora", "Also called monstera minima.", 25);
+insert into items (name, description, price) values ("Aloe Vera", "Produces a medicinal gel.", 9);
+insert into items (name, description, price) values ("Watermelon seeds", "A packet of watermelon seeds.", 1);
+insert into items (name, description, price) values ("Iresine", "Also called bloodleaf due to its red leaves.", 9);
+insert into items (name, description, price) values ("String of Pearls", "A small succulent plant.", 5);
+
+create user 'plantshop' identified with mysql_native_password by '6qNaYDdq3pBc34';
+grant select on plantshop.items to plantshop;
