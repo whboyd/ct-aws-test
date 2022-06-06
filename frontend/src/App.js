@@ -20,7 +20,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h2>The Store</h2>
+        <h2>Plant Shop</h2>
       </header>
       <div className="items-container">
         {itemData.items?.map(item => (

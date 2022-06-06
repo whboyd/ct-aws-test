@@ -23,7 +23,7 @@ apt install -y -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7
 until echo "show databases;" | mysql; do sleep 5; done
 cat << EOF | mysql
 create database store;
-use store;
+use plantshop;
 
 create table items (
   id int not null auto_increment,
@@ -40,8 +40,8 @@ insert into items (name, description, price) values ("flowers", "Not actually fl
 insert into items (name, description, price) values ("rocks", "A pile o' stones.", 3);
 insert into items (name, description, price) values ("orange soda", "Several bottles of orange soda.", 3);
 
-create user 'woo' identified with mysql_native_password by 'woo';
-grant select on store.items to woo;
+create user 'plantshop' identified with mysql_native_password by '6qNaYDdq3pBc34';
+grant select on plantshop.items to plantshop;
 EOF
 
 # API
@@ -50,60 +50,60 @@ apt update
 apt install -y nodejs=18.3.0-deb-1nodesource1
 
 cd /opt
-rm -rf ct-aws-test
-git clone https://github.com/whboyd/ct-aws-test.git
+rm -rf ctaws-plant-shop
+git clone https://github.com/ACloudGuru/ctaws-plant-shop.git
 
-cd /opt/ct-aws-test/api
+cd /opt/ctaws-plant-shop/api
 npm install
-cat << EOF > /etc/systemd/system/ct-aws-api.service
+cat << EOF > /etc/systemd/system/ctaws-plant-shop-api.service
 [Service]
-WorkingDirectory=/opt/ct-aws-test/api
+WorkingDirectory=/opt/ctaws-plant-shop/api
 ExecStart=node server.js
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=ct-aws-api
-User=ct-aws
-Group=ct-aws
+SyslogIdentifier=ctaws-plant-shop-api
+User=plantshop
+Group=plantshop
 Environment=DB_HOST=127.0.0.1
-Environment=DB_USER=woo
-Environment=DB_PASS=woo
+Environment=DB_USER=plantshop
+Environment=DB_PASS=6qNaYDdq3pBc34
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-useradd ct-aws
-chown -R ct-aws:ct-aws /opt/ct-aws-test
+useradd plantshop
+chown -R plantshop:plantshop /opt/ctaws-plant-shop
 
 systemctl daemon-reload
-systemctl enable ct-aws-api
-systemctl restart ct-aws-api
+systemctl enable ctaws-plant-shop-api
+systemctl restart ctaws-plant-shop-api
 
 # Frontend
 npm install -g serve
 
-cat << EOF > /etc/systemd/system/ct-aws-frontend.service
+cat << EOF > /etc/systemd/system/ctaws-plant-shop-frontend.service
 [Service]
-WorkingDirectory=/opt/ct-aws-test/frontend
+WorkingDirectory=/opt/ctaws-plant-shop/frontend
 ExecStart=npm start
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=ct-aws-frontend
-User=ct-aws
-Group=ct-aws
+SyslogIdentifier=ctaws-plant-shop-frontend
+User=plantshop
+Group=plantshop
 Environment=PORT=8081
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-cd /opt/ct-aws-test/frontend
+cd /opt/ctaws-plant-shop/frontend
 rm package-lock.json
 npm install
 npm run build
-chown -R ct-aws:ct-aws /opt/ct-aws-test
+chown -R plantshop:plantshop /opt/ctaws-plant-shop
 systemctl daemon-reload
-systemctl enable ct-aws-frontend
-systemctl restart ct-aws-frontend
+systemctl enable ctaws-plant-shop-frontend
+systemctl restart ctaws-plant-shop-frontend
